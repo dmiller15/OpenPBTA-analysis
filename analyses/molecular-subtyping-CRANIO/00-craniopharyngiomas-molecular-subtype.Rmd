@@ -133,8 +133,8 @@ allmeta <-
 
 Append molecular subtypes defined as follows:
 1. `CRANIO, PAP`: patient has BRAF.V600E mutation and is older than the age_of_adulthood (40 years in this case)
-1. `CRANIO, ADAM`:patient has CTNNB1.Exon3 mutation and is younger than the age_of_adulthood (40 years in this case)
-1. `CRANIO, ADAM;CRANIO, PAP` Both of the above (this is actually impossible given the restriction on age)
+1. `CRANIO, ADAM`:patient has CTNNB1.Exon3 mutation
+1. `CRANIO, ADAM;CRANIO, PAP` Both of the above
 1. `CRANIO, To be classified` None of the above
 Select the columns from the table that the PIs have requested
 
@@ -147,10 +147,10 @@ snv_subtype <-
   mutate(fourty_or_older = as.numeric(age_at_diagnosis_days) >= age_of_adulthood) %>%
   mutate(molecular_subtype =
            case_when(
-             (BRAF.V600E & fourty_or_older) & !(CTNNB1.Exon3 & !fourty_or_older) ~ "CRANIO, PAP",
-             !(BRAF.V600E & fourty_or_older) & (CTNNB1.Exon3 & !fourty_or_older) ~ "CRANIO, ADAM",
-             (BRAF.V600E & fourty_or_older) & (CTNNB1.Exon3 & !fourty_or_older) ~ "CRANIO, ADAM;CRANIO, PAP",
-             !(BRAF.V600E & fourty_or_older) & !(CTNNB1.Exon3 & !fourty_or_older) ~ "CRANIO, To be classified"
+             (BRAF.V600E & fourty_or_older) & !CTNNB1.Exon3 ~ "CRANIO, PAP",
+             !(BRAF.V600E & fourty_or_older) & CTNNB1.Exon3 ~ "CRANIO, ADAM",
+             (BRAF.V600E & fourty_or_older) & CTNNB1.Exon3 ~ "CRANIO, ADAM;CRANIO, PAP",
+             !(BRAF.V600E & fourty_or_older) & !CTNNB1.Exon3 ~ "CRANIO, To be classified"
            )) %>%
   select(Kids_First_Participant_ID,sample_id,molecular_subtype)
 
